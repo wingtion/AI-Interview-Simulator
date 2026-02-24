@@ -1,0 +1,516 @@
+﻿/* --- GLOBAL RESET --- */
+:root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+    color-scheme: dark;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-color: #0a0a0a;
+    color: #e0e0e0;
+    overflow-x: hidden;
+}
+
+/* ⚠️ FIX: Allow #root to be full width so Interview page works */
+#root {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: left; /* Reset text alignment */
+}
+
+/* --- HOME PAGE STYLES (Center ONLY the Home Page) --- */
+.home-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto; /* This centers the Home content */
+    padding: 40px 20px;
+    box-sizing: border-box;
+    text-align: center; /* Center text on Home Page */
+}
+
+.hero {
+    margin-top: 40px;
+    margin-bottom: 60px;
+    animation: fadeIn 1s ease-in;
+}
+
+    .hero h1 {
+        font-size: 3.5rem;
+        background: linear-gradient(90deg, #fff, #44ff44);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        color: #888;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+.badge {
+    background: #111;
+    color: #44ff44;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: inline-block;
+    margin-bottom: 15px;
+    border: 1px solid #44ff44;
+    box-shadow: 0 0 10px rgba(68, 255, 68, 0.2);
+}
+
+.modes-section h2 {
+    font-size: 2rem;
+    margin-bottom: 40px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    justify-content: center;
+    padding: 0 20px;
+}
+
+.card-mode {
+    background: #161616;
+    border: 1px solid #333;
+    padding: 30px;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+    .card-mode:hover {
+        transform: translateY(-8px);
+        border-color: #44ff44;
+        box-shadow: 0 10px 30px rgba(68, 255, 68, 0.15);
+        background: #1a1a1a;
+    }
+
+    .card-mode .icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        background: #222;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+    }
+
+    .card-mode h3 {
+        margin: 0 0 10px 0;
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    .card-mode p {
+        color: #aaa;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        flex-grow: 1;
+    }
+
+.tag {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+    .tag.hard {
+        background: rgba(255, 68, 68, 0.1);
+        color: #ff4444;
+        border: 1px solid #ff4444;
+    }
+
+    .tag.medium {
+        background: rgba(255, 170, 68, 0.1);
+        color: #ffaa44;
+        border: 1px solid #ffaa44;
+    }
+
+    .tag.soft {
+        background: rgba(68, 170, 255, 0.1);
+        color: #44aaff;
+        border: 1px solid #44aaff;
+    }
+
+    .tag.expert {
+        background: rgba(170, 68, 255, 0.1);
+        color: #aa44ff;
+        border: 1px solid #aa44ff;
+    }
+
+.footer {
+    margin-top: 80px;
+    border-top: 1px solid #222;
+    padding-top: 40px;
+    color: #555;
+}
+
+.stats {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- INTERVIEW PAGE STYLES (Full Width) --- */
+.container {
+    display: flex;
+    height: 100vh;
+    width: 100vw; /* 👈 Forces full screen width */
+    background-color: #121212;
+    overflow: hidden;
+}
+
+.editor-pane {
+    flex: 1;
+    border-right: 2px solid #333;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #1e1e1e;
+    padding: 20px;
+}
+
+.header {
+    padding: 10px 20px;
+    background-color: #252526;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.chat-log {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    border: 1px solid #333;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #121212;
+}
+
+.message {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 6px;
+    max-width: 85%;
+    line-height: 1.5;
+}
+
+    .message.user {
+        background-color: #2d2d2d;
+        margin-left: auto;
+        color: #ddd;
+        border-left: 4px solid #44ff44;
+    }
+
+    .message.ai {
+        background-color: #0e639c;
+        margin-right: auto;
+        color: white;
+        border-left: 4px solid #66d9ef;
+    }
+
+    .message.system {
+        text-align: center;
+        color: #888;
+        font-size: 0.8rem;
+        width: 100%;
+    }
+
+.mic-button {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.mic-active {
+    background-color: #ff4444;
+    color: white;
+    border: 4px solid #ffaaaa;
+    animation: pulse 1.5s infinite;
+}
+
+.mic-inactive {
+    background-color: #444;
+    color: #aaa;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    background: #252526;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.btn-start {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+}
+
+.btn-stop {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* 1. Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #fff, #44ff44);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+}
+
+.nav-links span {
+    margin-left: 30px;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.2s;
+    font-size: 0.9rem;
+}
+
+    .nav-links span:hover {
+        color: white;
+    }
+
+/* 2. Hero Section with Glow */
+.hero-container {
+    position: relative;
+    padding: 80px 20px;
+    text-align: center;
+}
+
+/* The Background Glow Orb */
+.glow-orb {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(68, 255, 68, 0.15) 0%, rgba(0,0,0,0) 70%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+.hero h1 {
+    font-size: 4rem;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+}
+
+.hero-sub {
+    font-size: 1.25rem;
+    color: #aaa;
+    max-width: 600px;
+    margin: 0 auto 40px auto;
+}
+
+/* 3. Stats Bar */
+.trust-bar {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    margin-bottom: 80px;
+    opacity: 0.6;
+    font-size: 0.9rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* 4. Bento Grid Layout */
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 Columns */
+    grid-template-rows: repeat(2, 250px); /* 2 Rows */
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto 80px auto;
+    padding: 0 20px;
+}
+
+/* Glass Card Effect */
+.bento-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+    .bento-card:hover {
+        background: rgba(255, 255, 255, 0.06);
+        transform: translateY(-5px);
+        border-color: rgba(68, 255, 68, 0.3);
+    }
+
+    .bento-card h3 {
+        font-size: 1.5rem;
+        margin: 0 0 10px 0;
+    }
+
+    .bento-card p {
+        color: #888;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin: 0;
+    }
+
+.bento-icon {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+/* Spanning Cells */
+.span-2 {
+    grid-column: span 2;
+}
+
+.span-row-2 {
+    grid-row: span 2;
+}
+
+/* 5. Feature List */
+.features-section {
+    display: flex;
+    justify-content: space-around;
+    padding: 80px 0;
+    border-top: 1px solid #222;
+    margin-top: 40px;
+}
+
+.feature-item {
+    text-align: center;
+    max-width: 300px;
+}
+
+    .feature-item h4 {
+        margin: 15px 0 10px 0;
+        font-size: 1.2rem;
+    }
+
+    .feature-item p {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+/* Buttons */
+.cta-button {
+    background: #44ff44;
+    color: black;
+    font-weight: bold;
+    padding: 15px 40px;
+    border-radius: 50px;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+    .cta-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(68, 255, 68, 0.4);
+    }
