@@ -4,7 +4,7 @@ namespace MockMate.API.Services
 {
     public class MockAiService : IAiService
     {
-        public async Task<AiResponse> GetResponseAsync(UserInput input)
+        public async Task<AiResponse> GetResponseAsync(UserInput input, string sessionId)
         {
             await Task.Delay(500);
 
@@ -15,7 +15,7 @@ namespace MockMate.API.Services
             };
         }
 
-        public Task<InterviewFeedback> GenerateFeedbackAsync()
+        public Task<InterviewFeedback> GenerateFeedbackAsync(string sessionId)
         {
             return Task.FromResult(new InterviewFeedback
             {

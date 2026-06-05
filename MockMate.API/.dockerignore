@@ -1,0 +1,12 @@
+# Build outputs
+bin/
+obj/
+.vs/
+
+# Never bake local secrets into the image (this file holds the dev Groq key)
+appsettings.Development.json
+
+# Misc
+**/*.user
+Dockerfile
+.dockerignore

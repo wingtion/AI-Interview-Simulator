@@ -1,14 +1,42 @@
-﻿import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '../components/Toast';
+import Footer from '../components/Footer';
+import MatrixRain from '../components/MatrixRain';
+import Reveal from '../components/Reveal';
+import { ARENAS } from '../lib/modes';
+import { API_URL } from '../config';
 import '../App.css';
 
 function Home() {
     const navigate = useNavigate();
+    const showToast = useToast();
 
     // --- STATE FOR RESUME UPLOAD ---
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isUploading, setIsUploading] = useState(false);
+    const [demoError, setDemoError] = useState(false);
+
+    const scrollToHow = () =>
+        document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+
+    // Close the upload modal with Escape
+    useEffect(() => {
+        if (!isModalOpen) return;
+        const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsModalOpen(false); };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [isModalOpen]);
+
+    // Backstop: kill any TTS still playing from an interview we just left.
+    useEffect(() => {
+        const kill = () => { window.speechSynthesis.resume(); window.speechSynthesis.cancel(); };
+        kill();
+        const id = setInterval(kill, 120);
+        const stop = setTimeout(() => clearInterval(id), 1500);
+        return () => { clearInterval(id); clearTimeout(stop); };
+    }, []);
 
     // --- UPLOAD LOGIC ---
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,7 +53,7 @@ function Home() {
         formData.append("file", selectedFile);
 
         try {
-            const response = await fetch("http://localhost:5000/api/resume/upload", {
+            const response = await fetch(`${API_URL}/api/resume/upload`, {
                 method: "POST",
                 body: formData,
             });
@@ -39,136 +67,195 @@ function Home() {
 
         } catch (error) {
             console.error(error);
-            alert("Failed to parse resume. Make sure it's a valid PDF.");
+            showToast("Failed to parse resume. Make sure it's a valid PDF.", 'error');
         } finally {
             setIsUploading(false);
             setIsModalOpen(false);
         }
     };
 
+    // Premium spotlight micro-interaction on cards
+    const handleSpotlight = (e: React.MouseEvent<HTMLDivElement>) => {
+        const el = e.currentTarget;
+        const rect = el.getBoundingClientRect();
+        el.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+        el.style.setProperty('--my', `${e.clientY - rect.top}px`);
+    };
+
     return (
-        <div style={{ minHeight: '100vh', background: '#050505', position: 'relative' }}>
+        <>
+            {/* ANIMATED BACKGROUND (outside .page so the page transition transform doesn't move it) */}
+            <MatrixRain />
+
+            <div className="page">
 
             {/* 1. NAVBAR */}
             <nav className="navbar">
-                <div className="logo">MockMate</div>
+                <div className="logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                    <span className="logo-mark">M</span>
+                    MockMate
+                </div>
                 <div className="nav-links">
-                    <span>How it Works</span>
-                    <span>Pricing</span>
-                    <span>Log In</span>
+                    <span onClick={scrollToHow}>How it Works</span>
+                    <span onClick={() => navigate('/practice')}>Practice Problems</span>
+                    <span onClick={() => navigate('/dashboard')}>Dashboard</span>
+                    <span className="nav-cta" onClick={() => navigate('/interview/Standard')}>
+                        Start Free
+                    </span>
                 </div>
             </nav>
 
             {/* 2. HERO SECTION */}
-            <header className="hero-container">
+            <header className="hero-container fade-in">
                 <div className="glow-orb"></div>
-                <div className="badge">✨ New: Resume Integration</div>
-                <h1>
-                    Crush Your <br />
-                    <span style={{ color: '#44ff44' }}>Technical Interview</span>
+                <div className="badge">✦ New — Resume Integration</div>
+                <h1 className="hero-title">
+                    Crush your next<br />
+                    <span className="accent">technical interview</span>
                 </h1>
                 <p className="hero-sub">
-                    Mock Interview AI simulator that listens to your voice, reads your code,
-                    and reviews your work.
+                    An AI interview simulator that listens to your voice, reads your code,
+                    and reviews your performance in real time.
                 </p>
-                <button className="cta-button" onClick={() => navigate('/interview/Standard')}>
-                    Start Practicing Now
-                </button>
+                <div className="hero-actions">
+                    <button className="btn btn-primary btn-lg" onClick={() => navigate('/interview/Standard')}>
+                        Start Mock Interview →
+                    </button>
+                    <button className="btn btn-secondary btn-lg" onClick={() => navigate('/practice')}>
+                        Practice Problems
+                    </button>
+                </div>
+                <div className="hero-modes-hint">
+                    <span className="hero-mode-item">🎤 <strong>Mock Interview</strong> — talk &amp; get scored</span>
+                    <span className="hero-mode-item">🧩 <strong>Practice</strong> — solve problems solo, no interview</span>
+                </div>
             </header>
 
-            {/* 3. BENTO GRID (Selection Modes) */}
-            <div className="bento-grid">
-
-                {/* LARGE CARD: GOOGLE MODE */}
-                <div className="bento-card span-2" onClick={() => navigate('/interview/Google')}>
-                    <div>
-                        <div className="bento-icon">🧠</div>
-                        <h3>Google Algorithms</h3>
-                        <p>Strict focus on Data Structures, Graph traversals, and optimizing Time Complexity.</p>
+            {/* 2b. DEMO PREVIEW */}
+            <div className="section demo-section">
+                <Reveal>
+                <div className="demo-window">
+                    <div className="demo-bar">
+                        <span className="wdot" /><span className="wdot" /><span className="wdot" />
+                        <div className="demo-url">mockmate.app/interview</div>
                     </div>
-                    <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
-                        <span className="tag hard">Hard</span>
-                        <span className="tag">Dijkstra</span>
-                        <span className="tag">DP</span>
-                    </div>
-                </div>
-
-                {/* THE NEW RESUME GRILL CARD (TALL CARD) */}
-                <div className="bento-card span-row-2" style={{ background: 'linear-gradient(180deg, rgba(68,255,68,0.1), rgba(0,0,0,0))', borderColor: '#44ff44' }} onClick={() => setIsModalOpen(true)}>
-                    <div className="bento-icon">📄</div>
-                    <h3 style={{ color: '#44ff44' }}>Grill My Resume</h3>
-                    <p>
-                        Upload your PDF resume. The AI will analyze your actual experience and grill you on your past projects.
-                    </p>
-                    <div style={{ marginTop: 'auto' }}>
-                        <span className="tag soft">Highly Personalized</span>
+                    <div className="demo-body">
+                        {!demoError ? (
+                            <img
+                                src="/demo.svg"
+                                alt="MockMate interview in action"
+                                onError={() => setDemoError(true)}
+                            />
+                        ) : (
+                            <div className="demo-placeholder">
+                                <div className="demo-badges">🎤 Voice · 💻 Live code · 🧠 AI feedback</div>
+                                <div className="demo-hint">Interview preview</div>
+                            </div>
+                        )}
                     </div>
                 </div>
-
-                {/* STANDARD CARD: STARTUP */}
-                <div className="bento-card" onClick={() => navigate('/interview/Startup')}>
-                    <div className="bento-icon">🚀</div>
-                    <h3>Startup Velocity</h3>
-                    <p>Ship features fast. Focus on React, Node.js, and clean pragmatic code.</p>
-                </div>
-
-                {/* STANDARD CARD: SYSTEM DESIGN */}
-                <div className="bento-card" onClick={() => navigate('/interview/SystemDesign')}>
-                    <div className="bento-icon">🏗️</div>
-                    <h3>System Design</h3>
-                    <p>Architect scalable systems. Load balancers, Caching, and Database sharding.</p>
-                </div>
-
+                </Reveal>
             </div>
 
+            {/* 2c. HOW IT WORKS */}
+            <section id="how-it-works" className="section">
+                <Reveal>
+                <div className="section-head">
+                    <h2>How it works</h2>
+                    <p>From zero to scored feedback in three steps.</p>
+                </div>
+                <div className="steps-grid stagger">
+                    <div className="step-card">
+                        <div className="step-num">1</div>
+                        <h3>Pick your mode</h3>
+                        <p>Google algorithms, Meta frontend, SQL & data, system design, Amazon leadership — or upload your résumé for personalized questions.</p>
+                    </div>
+                    <div className="step-card">
+                        <div className="step-num">2</div>
+                        <h3>Talk &amp; code live</h3>
+                        <p>Speak your thoughts through the mic and write in the editor. The AI interviewer reacts in real time and can run your code.</p>
+                    </div>
+                    <div className="step-card">
+                        <div className="step-num">3</div>
+                        <h3>Get scored feedback</h3>
+                        <p>Receive coding and communication scores with actionable notes — all tracked on your personal dashboard.</p>
+                    </div>
+                </div>
+                </Reveal>
+            </section>
+
+            {/* 3. BENTO GRID (Selection Modes) */}
+            <section className="section">
+                <Reveal>
+                <div className="section-head">
+                    <h2>Choose your arena</h2>
+                    <p>Tailored interview modes, each with its own personality and focus.</p>
+                </div>
+
+                <div className="bento-grid stagger">
+                    {ARENAS.map((a) => (
+                        <div
+                            key={a.id}
+                            className={`bento-card ${a.span ?? ''} ${a.resume ? 'featured' : ''}`}
+                            onMouseMove={handleSpotlight}
+                            onClick={() => (a.resume ? setIsModalOpen(true) : navigate(`/interview/${a.id}`))}
+                        >
+                            <span className={`bento-diff tag ${a.difficulty.level}`}>{a.difficulty.label}</span>
+                            <div>
+                                <div className="bento-icon" data-cat={a.category}>{a.emoji}</div>
+                                <h3>{a.title}</h3>
+                                <p>{a.desc}</p>
+                            </div>
+                            {a.tags && a.tags.length > 0 && (
+                                <div className="card-tags">
+                                    {a.tags.map((t) => (
+                                        <span key={t.label} className="tag">{t.label}</span>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+                </Reveal>
+            </section>
+
             {/* FOOTER */}
-            <footer className="footer" style={{ textAlign: 'center', paddingBottom: '40px' }}>
-                <p>&copy; 2026 MockMate Inc. Built with .NET 8 & React.</p>
-            </footer>
+            <Footer />
 
             {/* UPLOAD MODAL */}
             {isModalOpen && (
-                <div style={{
-                    position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-                    backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
-                }}>
-                    <div style={{
-                        backgroundColor: '#1e1e1e', padding: '40px', borderRadius: '16px',
-                        width: '400px', textAlign: 'center', border: '1px solid #333'
-                    }}>
-                        <h2 style={{ marginTop: 0 }}>Upload Resume</h2>
-                        <p style={{ color: '#888', marginBottom: '30px' }}>PDF format only. We extract the text and generate personalized questions.</p>
+                <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+                    <div className="modal" role="dialog" aria-modal="true" aria-label="Upload your resume" onClick={(e) => e.stopPropagation()}>
+                        <h2>Upload your resume</h2>
+                        <p className="modal-sub">PDF only. We extract the text and generate personalized, project-specific questions.</p>
 
-                        <input
-                            type="file"
-                            accept="application/pdf"
-                            onChange={handleFileChange}
-                            style={{ marginBottom: '20px', color: 'white' }}
-                        />
+                        <div className="file-drop">
+                            <input
+                                type="file"
+                                accept="application/pdf"
+                                onChange={handleFileChange}
+                                className="file-input"
+                            />
+                        </div>
 
-                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-                            <button
-                                onClick={() => setIsModalOpen(false)}
-                                style={{ padding: '10px 20px', background: '#333', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
-                            >
+                        <div className="modal-actions">
+                            <button className="btn btn-ghost" onClick={() => setIsModalOpen(false)}>
                                 Cancel
                             </button>
                             <button
+                                className="btn btn-primary"
                                 onClick={handleUpload}
                                 disabled={!selectedFile || isUploading}
-                                style={{
-                                    padding: '10px 20px', background: selectedFile ? '#44ff44' : '#222',
-                                    color: selectedFile ? 'black' : '#555', fontWeight: 'bold', border: 'none', borderRadius: '8px', cursor: selectedFile ? 'pointer' : 'not-allowed'
-                                }}
                             >
-                                {isUploading ? "Reading PDF..." : "Start Interview"}
+                                {isUploading ? "Reading PDF…" : "Start Interview"}
                             </button>
                         </div>
                     </div>
                 </div>
             )}
 
-        </div>
+            </div>
+        </>
     );
 }
 

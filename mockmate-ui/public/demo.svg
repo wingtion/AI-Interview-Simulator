@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" font-family="'Segoe UI', Arial, sans-serif">
+  <defs>
+    <linearGradient id="mk" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3ecf8e"/><stop offset="1" stop-color="#2aa873"/>
+    </linearGradient>
+  </defs>
+
+  <!-- base -->
+  <rect width="1280" height="720" fill="#0a0b0d"/>
+
+  <!-- ============ EDITOR PANE ============ -->
+  <rect x="0" y="0" width="780" height="720" fill="#0e0f12"/>
+
+  <!-- toolbar -->
+  <rect x="0" y="0" width="780" height="52" fill="#141519"/>
+  <line x1="0" y1="52" x2="780" y2="52" stroke="#1f2128"/>
+  <rect x="20" y="15" width="58" height="22" rx="7" fill="#1a1c22" stroke="#23252d"/>
+  <rect x="30" y="23" width="34" height="6" rx="3" fill="#6b7080"/>
+  <rect x="96" y="15" width="86" height="22" rx="6" fill="#1a1c22" stroke="#23252d"/>
+  <rect x="106" y="23" width="60" height="6" rx="3" fill="#a8adb8"/>
+  <!-- right actions -->
+  <rect x="560" y="15" width="58" height="22" rx="7" fill="none" stroke="#23252d"/>
+  <rect x="572" y="23" width="34" height="6" rx="3" fill="#a8adb8"/>
+  <rect x="628" y="15" width="58" height="22" rx="7" fill="none" stroke="#23252d"/>
+  <rect x="640" y="23" width="34" height="6" rx="3" fill="#a8adb8"/>
+  <rect x="696" y="15" width="64" height="22" rx="7" fill="#3ecf8e"/>
+  <rect x="710" y="23" width="36" height="6" rx="3" fill="#04130b"/>
+
+  <!-- code -->
+  <g>
+    <!-- line numbers -->
+    <g fill="#3a3d45">
+      <rect x="20" y="84" width="14" height="7" rx="2"/>
+      <rect x="20" y="116" width="14" height="7" rx="2"/>
+      <rect x="20" y="148" width="14" height="7" rx="2"/>
+      <rect x="20" y="180" width="14" height="7" rx="2"/>
+      <rect x="20" y="212" width="14" height="7" rx="2"/>
+      <rect x="20" y="244" width="14" height="7" rx="2"/>
+      <rect x="20" y="276" width="14" height="7" rx="2"/>
+      <rect x="20" y="308" width="14" height="7" rx="2"/>
+      <rect x="20" y="340" width="14" height="7" rx="2"/>
+    </g>
+    <!-- tokens -->
+    <rect x="64" y="83" width="220" height="9" rx="3" fill="#6b7080"/>
+    <rect x="64" y="115" width="64" height="9" rx="3" fill="#5e9dff"/>
+    <rect x="136" y="115" width="120" height="9" rx="3" fill="#f5a623"/>
+    <rect x="264" y="115" width="40" height="9" rx="3" fill="#a8adb8"/>
+    <rect x="96" y="147" width="50" height="9" rx="3" fill="#5e9dff"/>
+    <rect x="154" y="147" width="150" height="9" rx="3" fill="#3ecf8e"/>
+    <rect x="96" y="179" width="80" height="9" rx="3" fill="#a8adb8"/>
+    <rect x="184" y="179" width="60" height="9" rx="3" fill="#f5a623"/>
+    <rect x="128" y="211" width="40" height="9" rx="3" fill="#5e9dff"/>
+    <rect x="176" y="211" width="180" height="9" rx="3" fill="#a8adb8"/>
+    <rect x="128" y="243" width="120" height="9" rx="3" fill="#3ecf8e"/>
+    <rect x="96" y="275" width="56" height="9" rx="3" fill="#5e9dff"/>
+    <rect x="160" y="275" width="90" height="9" rx="3" fill="#a8adb8"/>
+    <rect x="64" y="307" width="40" height="9" rx="3" fill="#a8adb8"/>
+    <rect x="64" y="339" width="150" height="9" rx="3" fill="#6b7080"/>
+  </g>
+
+  <!-- console -->
+  <rect x="0" y="572" width="780" height="148" fill="#0c0d10"/>
+  <line x1="0" y1="572" x2="780" y2="572" stroke="#1f2128"/>
+  <circle cx="26" cy="598" r="4" fill="#3ecf8e"/>
+  <rect x="40" y="594" width="64" height="7" rx="3" fill="#6b7080"/>
+  <rect x="20" y="628" width="260" height="8" rx="3" fill="#a8adb8"/>
+  <rect x="20" y="652" width="180" height="8" rx="3" fill="#a8adb8"/>
+  <rect x="20" y="676" width="120" height="8" rx="3" fill="#3ecf8e"/>
+
+  <!-- ============ CHAT PANE ============ -->
+  <line x1="780" y1="0" x2="780" y2="720" stroke="#1f2128"/>
+
+  <!-- persona header -->
+  <rect x="804" y="20" width="452" height="60" rx="14" fill="#141519" stroke="#1f2128"/>
+  <rect x="816" y="32" width="36" height="36" rx="10" fill="#23252d"/>
+  <rect x="826" y="46" width="16" height="9" rx="2" fill="#3ecf8e"/>
+  <rect x="864" y="36" width="120" height="9" rx="3" fill="#f4f5f7"/>
+  <rect x="864" y="54" width="80" height="7" rx="3" fill="#6b7080"/>
+  <rect x="1110" y="40" width="60" height="20" rx="10" fill="#1a1c22" stroke="#23252d"/>
+  <circle cx="1122" cy="50" r="3" fill="#ff5f5f"/>
+  <rect x="1130" y="47" width="32" height="6" rx="3" fill="#a8adb8"/>
+  <rect x="1182" y="40" width="50" height="20" rx="8" fill="none" stroke="#ff5f5f" stroke-opacity="0.4"/>
+  <rect x="1194" y="47" width="26" height="6" rx="3" fill="#ff5f5f"/>
+
+  <!-- AI bubble -->
+  <rect x="804" y="104" width="320" height="86" rx="16" fill="#1a1c22" stroke="#23252d"/>
+  <rect x="820" y="118" width="28" height="7" rx="3" fill="#5e9dff"/>
+  <rect x="820" y="136" width="280" height="8" rx="3" fill="#cfd2d8"/>
+  <rect x="820" y="156" width="250" height="8" rx="3" fill="#cfd2d8"/>
+  <rect x="820" y="172" width="160" height="8" rx="3" fill="#cfd2d8"/>
+
+  <!-- user bubble -->
+  <rect x="956" y="206" width="300" height="64" rx="16" fill="#16281f" stroke="#3ecf8e" stroke-opacity="0.35"/>
+  <rect x="972" y="220" width="34" height="7" rx="3" fill="#3ecf8e"/>
+  <rect x="972" y="238" width="260" height="8" rx="3" fill="#e7e9ec"/>
+  <rect x="972" y="254" width="180" height="8" rx="3" fill="#e7e9ec"/>
+
+  <!-- AI bubble 2 -->
+  <rect x="804" y="286" width="300" height="64" rx="16" fill="#1a1c22" stroke="#23252d"/>
+  <rect x="820" y="300" width="28" height="7" rx="3" fill="#5e9dff"/>
+  <rect x="820" y="318" width="250" height="8" rx="3" fill="#cfd2d8"/>
+  <rect x="820" y="334" width="150" height="8" rx="3" fill="#cfd2d8"/>
+
+  <!-- voice panel -->
+  <rect x="804" y="556" width="452" height="140" rx="16" fill="#141519" stroke="#1f2128"/>
+  <!-- waveform -->
+  <g fill="#3ecf8e">
+    <rect x="984" y="588" width="8" height="20" rx="4"/>
+    <rect x="1000" y="580" width="8" height="36" rx="4"/>
+    <rect x="1016" y="572" width="8" height="52" rx="4"/>
+    <rect x="1032" y="582" width="8" height="32" rx="4"/>
+    <rect x="1048" y="590" width="8" height="16" rx="4"/>
+  </g>
+  <!-- mic -->
+  <circle cx="1030" cy="650" r="26" fill="#ff5f5f"/>
+  <rect x="1024" y="638" width="12" height="20" rx="6" fill="#ffffff"/>
+  <rect x="1019" y="664" width="22" height="5" rx="2" fill="#ffffff" fill-opacity="0.85"/>
+</svg>

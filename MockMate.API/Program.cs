@@ -9,25 +9,40 @@ builder.Services.AddSignalR(); // Enable SignalR
 
 builder.Services.AddHttpClient();
 
+// Per-session interview history, isolated by SignalR connection id
+builder.Services.AddSingleton<ConversationStore>();
+
 builder.Services.AddScoped<IAiService, GroqAiService>();
 
 builder.Services.AddScoped<CodeExecutionService>();
+
+// Allowed browser origins for CORS. localhost is always permitted for local dev;
+// production origins (the Netlify URL) come from the "AllowedOrigins" config /
+// the `AllowedOrigins` Fly secret (comma-separated).
+var allowedOrigins = new List<string> { "http://localhost:5173" };
+var configuredOrigins = builder.Configuration["AllowedOrigins"];
+if (!string.IsNullOrWhiteSpace(configuredOrigins))
+{
+    allowedOrigins.AddRange(
+        configuredOrigins.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
+}
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // The default Vite/React port
+        policy.WithOrigins(allowedOrigins.ToArray())
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials(); 
+              .AllowCredentials();
     });
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-app.UseHttpsRedirection();
+// Note: HTTPS is terminated at the Fly.io edge (force_https in fly.toml) and at
+// Netlify for the frontend, so no in-app UseHttpsRedirection is needed. Adding it
+// here would only emit "failed to determine https port" warnings behind the proxy.
 
 app.UseCors("ReactPolicy"); // Activate CORS
 

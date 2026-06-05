@@ -34,10 +34,10 @@ const AudioVisualizer = ({ isListening, isSpeaking }: VisualizerProps) => {
                 );
             }
 
-            // Determine color
-            let color = '#444';
-            if (isListening) color = '#44ff44';
-            else if (isSpeaking) color = '#0e639c';
+            // Determine color (matches design tokens)
+            let color = '#3a3d45';
+            if (isListening) color = '#ff5f5f';
+            else if (isSpeaking) color = '#5e9dff';
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -69,6 +69,7 @@ const AudioVisualizer = ({ isListening, isSpeaking }: VisualizerProps) => {
             width={100}
             height={40}
             style={{ width: '100px', height: '40px' }}
+            aria-hidden="true"
         />
     );
 };

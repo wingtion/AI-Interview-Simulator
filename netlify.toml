@@ -1,0 +1,11 @@
+# Netlify build config for the React frontend (monorepo: app lives in mockmate-ui/).
+[build]
+  base = "mockmate-ui"
+  command = "npm run build"
+  publish = "dist"          # resolved relative to base -> mockmate-ui/dist
+
+# SPA fallback: let react-router handle client-side routes on refresh / deep links.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

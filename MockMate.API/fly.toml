@@ -1,0 +1,19 @@
+# Fly.io configuration for the MockMate .NET API.
+# `app` must be globally unique — `fly launch` will confirm/adjust it.
+app = 'mockmate-api'
+primary_region = 'fra'   # Frankfurt — lowest latency from Turkey
+
+[build]
+
+[http_service]
+  internal_port = 8080
+  force_https = true        # Fly terminates TLS at the edge and forces HTTPS
+  # Always-on: never stop the machine, so there is no cold start.
+  auto_stop_machines = 'off'
+  auto_start_machines = false
+  min_machines_running = 1
+  processes = ['app']
+
+[[vm]]
+  size = 'shared-cpu-1x'
+  memory = '256mb'   # bump with `fly scale memory 512` if the app OOMs under load

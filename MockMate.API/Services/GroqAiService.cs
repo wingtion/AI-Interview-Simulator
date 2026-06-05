@@ -11,14 +11,13 @@ namespace MockMate.API.Services
         private readonly HttpClient _httpClient;
         private readonly string _apiKey;
         private readonly JsonSerializerOptions _jsonOptions;
+        private readonly ConversationStore _store;
 
-        // 🧠 SIMPLE MEMORY: Stores chat history
-        private static List<object> _conversationHistory = new();
-
-        public GroqAiService(HttpClient httpClient, IConfiguration configuration)
+        public GroqAiService(HttpClient httpClient, IConfiguration configuration, ConversationStore store)
         {
             _httpClient = httpClient;
             _apiKey = configuration["GroqApiKey"];
+            _store = store;
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -26,27 +25,45 @@ namespace MockMate.API.Services
             };
         }
 
-        public async Task<AiResponse> GetResponseAsync(UserInput input)
+        public async Task<AiResponse> GetResponseAsync(UserInput input, string sessionId)
         {
+            // Per-session history — isolated by SignalR connection id, fresh each interview
+            var history = _store.GetHistory(sessionId);
+
             // 1. Determine the System Persona based on Mode
             string systemPrompt = "You are a helpful technical interviewer.";
 
             switch (input.Mode)
             {
                 case "Google":
-                    systemPrompt = "You are a Senior Google Staff Engineer. You care deeply about Big O notation, scalability, and edge cases. You are strict. If the user writes O(n^2) code, question it immediately. Do not be polite; be rigorous.";
+                    systemPrompt = "You are a Senior Google Staff Engineer. You care deeply about Big O notation, scalability, and edge cases. You are strict. If the user writes O(n^2) code, question it immediately. Do not be polite; be rigorous. Begin the interview by stating ONE concrete algorithmic coding problem for the candidate to solve, including a short example input/output. Then evaluate their approach as they work.";
                     break;
                 case "Startup":
-                    systemPrompt = "You are a CTO of a fast-paced YCombinator startup. You care about speed, shipping features, and clean, readable code. You don't care about micro-optimizations. You want to see if the candidate can build things fast.";
+                    systemPrompt = "You are a CTO of a fast-paced YCombinator startup. You care about speed, shipping features, and clean, readable code. You don't care about micro-optimizations. You want to see if the candidate can build things fast. Begin the interview by giving the candidate ONE concrete, practical coding task to build, with a short example. Then review their solution as they go.";
+                    break;
+                case "SystemDesign":
+                    systemPrompt = "You are a Principal Engineer conducting a system design interview. Do NOT ask for code. Focus on architecture: requirements gathering, API design, data modeling, scalability, load balancing, caching, database choice and sharding, and trade-offs. Push the candidate to justify decisions and discuss bottlenecks at scale. Begin by giving the candidate ONE concrete system to design (e.g. a URL shortener, a news feed, a rate limiter). Ask one focused question at a time, under 3 sentences.";
+                    break;
+                case "Meta":
+                    systemPrompt = "You are a Senior Meta (Facebook) Frontend Engineer running a front-end interview. The candidate writes code in the editor. Begin by giving them ONE concrete, interactive UI component to build (e.g. a typeahead search, an image carousel, a todo list with filters), with a short spec and example. Care about component structure, state management, accessibility, and rendering performance, plus product/UX sense. Review their implementation as they work and push on edge cases and performance.";
+                    break;
+                case "SQL":
+                    systemPrompt = "You are a Senior Data Engineer running a SQL interview. The candidate writes real SQL in the editor. Begin by describing ONE concrete schema (a few tables with their columns) and ask for ONE query against it, with a short example of the expected output. Care about correctness, joins, aggregation, indexing, and window functions. Review their query, point out bugs or performance problems, and progressively raise the difficulty.";
+                    break;
+                case "DevOps":
+                    systemPrompt = "You are a Platform / SRE Lead running a DevOps interview. The candidate writes config (YAML, Dockerfiles, shell) in the editor. Begin with ONE concrete, practical task — e.g. write a CI pipeline, a Kubernetes manifest, or a Dockerfile, or debug a broken deployment described in a short scenario. Care about CI/CD, containers, infrastructure-as-code, observability, and reliability trade-offs. Review their solution and probe how it behaves in production.";
                     break;
                 case "Behavioral":
                     systemPrompt = "You are an HR Manager. Do not ask for code. Ask about conflict resolution, leadership principles, and past experiences. Use the STAR method.";
+                    break;
+                case "Amazon":
+                    systemPrompt = "You are an Amazon Bar Raiser running a behavioral interview. Do NOT ask for code. Probe past experiences strictly through Amazon's Leadership Principles (Customer Obsession, Ownership, Dive Deep, Bias for Action, Deliver Results, and the rest). Require concrete, structured answers using the STAR method (Situation, Task, Action, Result) and dig into the candidate's specific individual contribution, not the team's. Ask ONE focused question at a time, under 3 sentences. Begin with one Leadership-Principle-based behavioral question.";
                     break;
                 case "Resume": 
                     systemPrompt = "You are a tough Hiring Manager. The user has provided their resume. Your job is to GRILL them on it. Pick one specific project or skill from the resume they provided and ask a highly technical follow-up question. Do not just summarize their resume. Ask them 'Why did you choose X over Y?' or 'How did you scale Z?'. Keep your question under 3 sentences.";
                     break;
                 default: // Standard
-                    systemPrompt = "You are a friendly but professional technical interviewer. Guide the candidate through the problem.";
+                    systemPrompt = "You are a friendly but professional technical interviewer. Begin the interview by giving the candidate ONE concrete coding problem to solve, with a short example input/output, then guide them through it.";
                     break;
             }
 
@@ -58,16 +75,16 @@ namespace MockMate.API.Services
             };
 
             // 3. Reset history if it's the start, or update system prompt context
-            if (_conversationHistory.Count == 0)
+            if (history.Count == 0)
             {
-                _conversationHistory.Add(new { role = "system", content = systemPrompt });
+                history.Add(new { role = "system", content = systemPrompt });
             }
 
-            _conversationHistory.Add(userMessage);
+            history.Add(userMessage);
 
-            while (_conversationHistory.Count > 8)
+            while (history.Count > 8)
             {
-                _conversationHistory.RemoveAt(1);
+                history.RemoveAt(1);
             }
 
             // 4. Prepare the Request
@@ -75,7 +92,7 @@ namespace MockMate.API.Services
             {
                 //"llama-3.3-70b-versatile"
                 model = "llama-3.1-8b-instant",
-                messages = _conversationHistory,
+                messages = history,
                 temperature = 0.6
             };
 
@@ -100,7 +117,7 @@ namespace MockMate.API.Services
             var aiText = groqResponse?.Choices?.FirstOrDefault()?.Message?.Content ?? "";
 
             // 6. Add AI's response to history
-            _conversationHistory.Add(new { role = "assistant", content = aiText });
+            history.Add(new { role = "assistant", content = aiText });
 
             return new AiResponse
             {
@@ -112,19 +129,22 @@ namespace MockMate.API.Services
         public async Task<string> GenerateProblemAsync(string topic, string difficulty)
         {
             var prompt = $@"
-        Generate a coding interview problem.
-        Topic: {topic}
-        Difficulty: {difficulty}
-        
-        Output format:
-        1. Title
-        2. Description
-        3. Example Input/Output
-        4. Constraints
-        
-        Do NOT provide the solution or code. 
-        Format the output as a code comment (using // for every line) so it can be pasted directly into a code editor.
-    ";
+Generate a coding interview problem.
+Topic: {topic}
+Difficulty: {difficulty}
+
+Format the response in clean GitHub-flavored Markdown with these sections:
+## (a short problem title)
+A concise description paragraph.
+
+**Examples**
+Show one or two input/output examples in a code block.
+
+**Constraints**
+A short bullet list.
+
+Do NOT provide the solution or any code that solves it. Keep it concise.
+";
 
             var requestData = new
             {
@@ -145,16 +165,18 @@ namespace MockMate.API.Services
 
             var response = await _httpClient.SendAsync(request);
 
-            if (!response.IsSuccessStatusCode) return "// Failed to generate problem.";
+            if (!response.IsSuccessStatusCode) return "Failed to generate problem. Please try again.";
 
             var responseString = await response.Content.ReadAsStringAsync();
             var groqResponse = JsonSerializer.Deserialize<GroqApiResponse>(responseString, _jsonOptions);
 
-            return groqResponse?.Choices?.FirstOrDefault()?.Message?.Content ?? "// No problem generated.";
+            return groqResponse?.Choices?.FirstOrDefault()?.Message?.Content ?? "No problem generated.";
         }
 
-        public async Task<InterviewFeedback> GenerateFeedbackAsync()
+        public async Task<InterviewFeedback> GenerateFeedbackAsync(string sessionId)
         {
+            var history = _store.GetHistory(sessionId);
+
             // 1. Create a special "Grader" prompt
             var feedbackPrompt = new
             {
@@ -172,13 +194,13 @@ namespace MockMate.API.Services
             };
 
             // 2. Temporarily add this instruction to history
-            var feedbackHistory = new List<object>(_conversationHistory);
+            var feedbackHistory = new List<object>(history);
             feedbackHistory.Add(feedbackPrompt);
 
             // 3. Send to Groq
             var requestData = new
             {
-                model = "llama-3.3-70b-versatile", // Use the smart model for grading
+                model = "llama-3.1-8b-instant", // Cheapest model for grading
                 messages = feedbackHistory,
                 response_format = new { type = "json_object" }, 
                 temperature = 0.2

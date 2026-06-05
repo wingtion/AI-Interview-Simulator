@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="'Segoe UI', Arial, sans-serif">
+  <defs>
+    <linearGradient id="mark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3ecf8e"/>
+      <stop offset="1" stop-color="#2aa873"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="20%" r="55%">
+      <stop offset="0" stop-color="#3ecf8e" stop-opacity="0.20"/>
+      <stop offset="60%" stop-color="#3ecf8e" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- background -->
+  <rect width="1200" height="630" fill="#0a0b0d"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="#ffffff" stroke-opacity="0.06"/>
+
+  <!-- logo mark + wordmark (centered group) -->
+  <g transform="translate(438, 150)">
+    <rect width="84" height="84" rx="20" fill="url(#mark)"/>
+    <text x="42" y="60" font-size="52" font-weight="800" fill="#04130b" text-anchor="middle">M</text>
+    <text x="108" y="60" font-size="46" font-weight="700" fill="#f4f5f7">MockMate</text>
+  </g>
+
+  <!-- headline -->
+  <text x="600" y="330" font-size="76" font-weight="800" fill="#f4f5f7" text-anchor="middle">AI Interview Simulator</text>
+
+  <!-- tagline -->
+  <text x="600" y="392" font-size="29" font-weight="500" fill="#a8adb8" text-anchor="middle">Talk through your answers, write and run code, get scored feedback</text>
+
+  <!-- feature pills with drawn icons -->
+  <g font-size="26" font-weight="600">
+    <!-- Voice -->
+    <g transform="translate(369, 452)">
+      <rect width="150" height="56" rx="28" fill="#141519" stroke="#ffffff" stroke-opacity="0.08"/>
+      <g transform="translate(26, 18)" fill="#3ecf8e">
+        <rect x="4" y="0" width="12" height="18" rx="6"/>
+        <path d="M0 12 a10 10 0 0 0 20 0" fill="none" stroke="#3ecf8e" stroke-width="3"/>
+        <rect x="8" y="20" width="4" height="6"/>
+        <rect x="3" y="25" width="14" height="3" rx="1.5"/>
+      </g>
+      <text x="58" y="37" fill="#3ecf8e">Voice</text>
+    </g>
+    <!-- Code -->
+    <g transform="translate(535, 452)">
+      <rect width="142" height="56" rx="28" fill="#141519" stroke="#ffffff" stroke-opacity="0.08"/>
+      <g transform="translate(26, 28)" fill="none" stroke="#5e9dff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="8,-9 0,0 8,9"/>
+        <polyline points="20,-9 28,0 20,9"/>
+      </g>
+      <text x="66" y="37" fill="#5e9dff">Code</text>
+    </g>
+    <!-- Score -->
+    <g transform="translate(693, 452)">
+      <rect width="160" height="56" rx="28" fill="#141519" stroke="#ffffff" stroke-opacity="0.08"/>
+      <g transform="translate(24, 16)" fill="#f5a623">
+        <rect x="0" y="14" width="6" height="10" rx="2"/>
+        <rect x="10" y="7" width="6" height="17" rx="2"/>
+        <rect x="20" y="0" width="6" height="24" rx="2"/>
+      </g>
+      <text x="60" y="37" fill="#f5a623">Score</text>
+    </g>
+  </g>
+</svg>
