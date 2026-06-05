@@ -1,15 +1,16 @@
-# Fly.io configuration for the MockMate .NET API.
-# `app` must be globally unique — `fly launch` will confirm/adjust it.
-app = 'mockmate-api'
-primary_region = 'fra'   # Frankfurt — lowest latency from Turkey
+# fly.toml app configuration file generated for mockmate-ai-api on 2026-06-05T18:37:54+03:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'mockmate-ai-api'
+primary_region = 'fra'
 
 [build]
 
 [http_service]
   internal_port = 8080
-  force_https = true        # Fly terminates TLS at the edge and forces HTTPS
-  # Cost-saver: suspend the machine when idle (RAM snapshot -> ~1s resume), and
-  # auto-start it on the next request. Near-$0 with a barely noticeable wake.
+  force_https = true
   auto_stop_machines = 'suspend'
   auto_start_machines = true
   min_machines_running = 0
@@ -17,4 +18,4 @@ primary_region = 'fra'   # Frankfurt — lowest latency from Turkey
 
 [[vm]]
   size = 'shared-cpu-1x'
-  memory = '256mb'   # bump with `fly scale memory 512` if the app OOMs under load
+  memory = '256mb'
