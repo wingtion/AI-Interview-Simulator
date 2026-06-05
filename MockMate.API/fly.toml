@@ -8,10 +8,11 @@ primary_region = 'fra'   # Frankfurt — lowest latency from Turkey
 [http_service]
   internal_port = 8080
   force_https = true        # Fly terminates TLS at the edge and forces HTTPS
-  # Always-on: never stop the machine, so there is no cold start.
-  auto_stop_machines = 'off'
-  auto_start_machines = false
-  min_machines_running = 1
+  # Cost-saver: suspend the machine when idle (RAM snapshot -> ~1s resume), and
+  # auto-start it on the next request. Near-$0 with a barely noticeable wake.
+  auto_stop_machines = 'suspend'
+  auto_start_machines = true
+  min_machines_running = 0
   processes = ['app']
 
 [[vm]]
